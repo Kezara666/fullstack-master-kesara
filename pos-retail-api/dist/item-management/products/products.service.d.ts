@@ -1,0 +1,30 @@
+import { EntityManager, Repository } from 'typeorm';
+import { Product } from './entities/product.entity';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { QtyType } from '../../inventory-management/qty-type/entities/qty-type.entity';
+import { Supplier } from '../supplier/entities/supplier.entity';
+import { ProductPrice } from '../product-prices/entities/product-price.entity';
+import { Shop } from 'src/shop-management/shop/entities/shop.entity';
+import { User } from 'src/shop-management/user/entities/user.entity';
+import { Qty } from 'src/inventory-management/qty/entities/qty.entity';
+import { CreateProductWithDependenciesDto } from './dto/create-product-with-dependencies.dto';
+export declare class ProductsService {
+    private readonly productRepository;
+    private readonly productPriceRepository;
+    private readonly supplierRepository;
+    private readonly qtyTypeRepository;
+    private readonly qtyRepository;
+    private readonly shopRepository;
+    private readonly userRepository;
+    private readonly entityManager;
+    constructor(productRepository: Repository<Product>, productPriceRepository: Repository<ProductPrice>, supplierRepository: Repository<Supplier>, qtyTypeRepository: Repository<QtyType>, qtyRepository: Repository<Qty>, shopRepository: Repository<Shop>, userRepository: Repository<User>, entityManager: EntityManager);
+    create(createProductDto: CreateProductDto): Promise<Product>;
+    createProductWithDependencies(createDto: CreateProductWithDependenciesDto): Promise<Product>;
+    findAll(): Promise<Product[]>;
+    findByShop(shopId: number): Promise<Product[]>;
+    findOne(id: number): Promise<Product>;
+    update(id: number, updateProductDto: UpdateProductDto): Promise<Product>;
+    remove(id: number): Promise<void>;
+    setProductCurrentPrice(productPriceId: number): Promise<void>;
+}

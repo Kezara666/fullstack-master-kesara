@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Debug NestJS App",
+        "skipFiles": ["<node_internals>/**"],
+        "program": "${workspaceFolder}/dist/main.js", // Path to compiled JS file
+        "preLaunchTask": "build", // Optional: Build TypeScript before debugging
+        "outFiles": ["${workspaceFolder}/dist/**/*.js"], // Compiled output files
+        "sourceMaps": true, // Enable source maps for TypeScript debugging
+        "console": "integratedTerminal", // Use the integrated terminal for logs
+        "internalConsoleOptions": "neverOpen"
+      }
+    ]
+  }
