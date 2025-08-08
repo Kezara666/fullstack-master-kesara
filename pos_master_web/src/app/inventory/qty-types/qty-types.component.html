@@ -1,0 +1,108 @@
+<!-- Toast for notifications -->
+<div class="flex justify-center ">
+  <p-toast [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"></p-toast>
+</div>
+
+<!-- Heading and Add Button -->
+<div class="flex items-center">
+  <div
+    class="relative flex items-center justify-start gap-10 px-6 py-6 mt-4 bg-gradient-to-r from-[var(--surface-overlay)] to-[var(--surface-overlay)] rounded shadow-lg backdrop-filter backdrop-blur-md bg-opacity-20 transition-all duration-300 hover:shadow-xl rounded-2xl border border-[var(--surface-border)]">
+    <div class="absoulute m-2 text-xl font-bold tracking-wide text-[var(--text-color-100)] uppercase sm:text-2xl bg-clip-text bg-gradient-to-r from-white to-gray-200  ">
+      Quantity Type Management
+    </div>
+    <div>
+      <p-button type="button" icon="pi pi-plus" (click)="showAddModal()"></p-button>
+    </div>
+  </div>
+</div>
+
+<!-- Qty Types Table -->
+<div class="mt-8 rounded-2xl shadow-md bg-[var(--surface-card)] bg-opacity-90 desktop-view border border-[var(--surface-border)]">
+  <div class="p-6">
+    <p-table #dt [value]="qtyTypes" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20]"
+      [globalFilterFields]="['id','name','primaryWeightTo']" [scrollable]="true" [scrollDirection]="'both'"
+      [scrollHeight]="'50rem'" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+        <div class="flex items-center space-x-4">
+          <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')" class="w-96"
+            placeholder="Search quantity type..." />
+          <p-button type="button" pButton pRipple icon="pi pi-file" (click)="exportExcel()" pTooltip="CSV"
+            tooltipPosition="bottom" label="Download"></p-button>
+        </div>
+        <tr >
+          <th>ID</th>
+          <th>Name</th>
+          <th>Primary Weight To</th>
+          <th>Major Weight</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-qtyType>
+        <tr class="hover:bg-[var(--surface-ground)] transition-colors duration-200">
+          <td>{{ qtyType.id }}</td>
+          <td>{{ qtyType.name }}</td>
+          <td>{{ qtyType.primaryWeightTo }}</td>
+          <td>{{ getMajorWeightName(qtyType) }}</td>
+
+          <td>
+            <div class="flex gap-1">
+              <p-button type="button" icon="pi pi-pencil" label="Edit" (click)="editQtyType(qtyType)"></p-button>
+              <p-button type="button" severity="danger" icon="pi pi-trash" label="Delete"
+                (click)="confirmDeleteQtyType(qtyType)"></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- Add/Edit Qty Type Dialog -->
+    <p-dialog header="{{ isEditMode ? 'Edit Quantity Type' : 'Add Quantity Type' }}" [(visible)]="displayModal"
+      [style]="{ width: '30rem' }" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [maximizable]="true">
+      <form #qtyTypeForm="ngForm">
+        <div class="space-y-4">
+          <!-- Major Weight Select -->
+          <div>
+            
+            <p-select [options]="qtyTypes" optionLabel="name" placeholder="Select Major Weight"
+              [(ngModel)]="currentQtyType.mainQtyId" name="majorWeight" class="w-full md:w-56" optionValue="id"/>
+          </div>
+          <!-- Name Field -->
+          <div>
+            <p-floatlabel variant="in">
+              <input pInputText id="name" name="name" [(ngModel)]="currentQtyType.name" autocomplete="off" required />
+              <label for="name">Quantity Type Name</label>
+            </p-floatlabel >
+          </div>
+          <!-- Primary Weight To Field -->
+          <div class="pt-3">
+            <p-floatlabel>
+              <input pInputText id="primaryWeightTo" name="primaryWeightTo" type="number"
+                [(ngModel)]="currentQtyType.primaryWeightTo" autocomplete="off" required />
+              <label for="primaryWeightTo">Primary Weight To</label>
+            </p-floatlabel>
+          </div>
+        </div>
+      </form>
+      <!-- Footer -->
+      <footer class="flex justify-between mt-6">
+        <p-button type="button" pButton icon="pi pi-times" (click)="closeModal()" label="Cancel"></p-button>
+        <p-button type="button" pButton icon="pi pi-save" (click)="saveQtyType()" label="Save"></p-button>
+      </footer>
+    </p-dialog>
+  </div>
+</div>
+
+<!-- Delete Confirmation Toast -->
+<div class="flex justify-center m-5 ">
+  <p-toast position="bottom-center" key="confirm" (onClose)="onRejectDelete()" [baseZIndex]="5000" severity="danger">
+    <ng-template let-message #message>
+      <div class="flex flex-col items-start flex-auto">
+        <div class="flex items-center gap-2">
+          <span class="font-bold">Dear User</span>
+        </div>
+        <div class="my-4 text-lg font-medium">{{ message.summary }}</div>
+        <p-button severity="danger" size="small" label="Yes" (click)="onConfirmDelete()"></p-button>
+      </div>
+    </ng-template>
+  </p-toast>
+</div>

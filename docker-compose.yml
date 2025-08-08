@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  frontend:
+    build: ./pos_master_web
+    ports:
+      - "4200:80"
+    networks:
+      - app-network
+
+  backend:
+    depends_on:
+      - mysql
+    build: ./pos-retail-api
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=root
+      - DB_PASSWORD=yourpassword
+      - DB_NAME=pos
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: yourpassword
+      MYSQL_DATABASE: pos
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

@@ -1,0 +1,22 @@
+// .vscode/launch.json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Angular in Chrome",
+      "type": "pwa-chrome", // Correct
+      "request": "launch",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}", // Correct
+      "preLaunchTask": "ng serve" // Correctly references the task label
+    },
+    {
+      "name": "Attach to Chrome (Angular)",
+      "type": "pwa-chrome", // Correct
+      "request": "attach",
+      "port": 9222, // Standard remote debugging port
+      "url": "http://localhost:4200", // Good to specify
+      "webRoot": "${workspaceFolder}" // Correct
+    }
+  ]
+}

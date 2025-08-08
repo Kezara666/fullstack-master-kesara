@@ -1,0 +1,103 @@
+
+
+<!-- Toast for notifications -->
+<div class="flex justify-center">
+  <p-toast [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }"></p-toast>
+</div>
+
+<!-- Heading and Add Button -->
+<div class="flex items-center justify-start">
+  <div
+    class="relative flex items-center justify-start gap-10 px-6 py-6 bg-gradient-to-r from-[var(--surface-overlay)] to-[var(--surface-overlay)] rounded shadow-lg backdrop-filter backdrop-blur-md bg-opacity-20 transition-all duration-300 hover:shadow-xl rounded-2xl border border-[var(--surface-border)]">
+    <div class="absoulute m-2 text-xl font-bold tracking-wide text-[var(--text-color-100)] uppercase sm:text-2xl bg-clip-text bg-gradient-to-r from-white to-gray-200  ">
+      Supplier Management
+    </div>
+    <div>
+      <p-button type="button" icon="pi pi-plus" (click)="showAddModal()"></p-button>
+    </div>
+  </div>
+</div>
+
+<!-- Supplier Table -->
+<div class="mt-8 rounded-2xl shadow-md bg-[var(--surface-card)] bg-opacity-90 desktop-view border border-[var(--surface-border)]">
+  <div class="p-5">
+    <p-table #dt [value]="suppliers" [paginator]="true" [rows]="5" [rowsPerPageOptions]="[5,10,20]"
+      [globalFilterFields]="['id','name']"
+      [scrollable]="true" [scrollDirection]="'both'" [scrollHeight]="'50rem'"
+      [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template pTemplate="header">
+        <div class="flex items-center space-x-4">
+          <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains')" class="w-96"
+            placeholder="Search supplier..." />
+          <p-button type="button" pButton pRipple icon="pi pi-file" (click)="exportExcel()" pTooltip="CSV"
+            tooltipPosition="bottom" label="Download"></p-button>
+        </div>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Created</th>
+          <th>Updated</th>
+          <th>Updated By</th>
+          <th>Actions</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-supplier>
+        <tr class="hover:bg-[var(--surface-ground)] transition-colors duration-200">
+          <td>{{ supplier.id }}</td>
+          <td>{{ supplier.name }}</td>
+          <td>{{ supplier.createdAt | date:'short' }}</td>
+          <td>{{ supplier.updatedAt | date:'short' }}</td>
+          <td>{{ supplier.updatedBy.name }}</td>
+          <td>
+            <div class="flex gap-1">
+              <p-button type="button" icon="pi pi-pencil" label="Edit" (click)="editSupplier(supplier)"></p-button>
+              <p-button type="button" severity="danger" icon="pi pi-trash" label="Delete" (click)="confirmDeleteSupplier(supplier)"></p-button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+    <!-- Add/Edit Supplier Dialog -->
+    <p-dialog header="{{ isEditMode ? 'Edit Supplier' : 'Add Supplier' }}" [(visible)]="displayModal"
+      [style]="{ width: '30rem' }"
+      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [maximizable]="true">
+      <form #supplierForm="ngForm">
+        <div class="space-y-4">
+          <!-- Name Field -->
+          <div class="flex flex-col">
+            <label for="Name" class="mb-1">Name</label>
+            <input
+              id="Name"
+              name="name"
+              [(ngModel)]="currentSupplier.name"
+              type="text"
+              class="h-12 px-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:[var(--p-primary-900)]"
+              placeholder="Enter Supplier Name"
+              required>
+          </div>
+        </div>
+      </form>
+      <!-- Footer -->
+      <footer class="flex justify-between mt-6">
+        <p-button type="button" pButton icon="pi pi-times" (click)="closeModal()" label="Cancel"></p-button>
+        <p-button type="button" pButton icon="pi pi-save" (click)="saveSupplier()" label="Save"></p-button>
+      </footer>
+    </p-dialog>
+  </div>
+</div>
+
+<!-- Delete Confirmation Toast -->
+<div class="flex justify-center m-5">
+  <p-toast position="bottom-center" key="confirm" (onClose)="onRejectDelete()" [baseZIndex]="5000" severity="danger">
+    <ng-template let-message #message>
+      <div class="flex flex-col items-start flex-auto">
+        <div class="flex items-center gap-2">
+          <span class="font-bold">Dear User</span>
+        </div>
+        <div class="my-4 text-lg font-medium">{{ message.summary }}</div>
+        <p-button severity="danger" size="small" label="Yes" (click)="onConfirmDelete()"></p-button>
+      </div>
+    </ng-template>
+  </p-toast>
+</div>
